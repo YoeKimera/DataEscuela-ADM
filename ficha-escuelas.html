@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataEscuela | Ficha de Escuelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root {
+      --gh-bg: #0d1117;
+      --gh-card: #161b22;
+      --gh-border: #30363d;
+      --gh-text: #e6edf3;
+      --gh-muted: #8b949e;
+    }
+
+    body {
+      background: radial-gradient(circle at 10% -20%, #1f2a3f 0%, var(--gh-bg) 40%);
+      color: var(--gh-text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      min-height: 100vh;
+    }
+
+    .gh-card {
+      border: 1px solid var(--gh-border);
+      background: var(--gh-card);
+      border-radius: 12px;
+    }
+
+    .table-row:hover {
+      background: rgba(88, 166, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="p-4 md:p-6">
+  <div class="max-w-7xl mx-auto space-y-4">
+    <header class="gh-card p-4 md:p-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h1 class="text-2xl font-semibold tracking-tight">Ficha de Escuelas</h1>
+        <p class="text-sm text-[#8b949e]">Módulo inicial para consulta de establecimientos</p>
+      </div>
+      <div class="flex gap-2">
+        <a href="dashboard.html" class="px-3 py-2 text-sm rounded-md border border-[#30363d] hover:border-[#58a6ff] transition">
+          <i class="fa-solid fa-arrow-left mr-1"></i>Volver al dashboard
+        </a>
+      </div>
+    </header>
+
+    <section class="gh-card p-4 md:p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_260px_220px] gap-3">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#8b949e] text-xs"></i>
+          <input id="searchInput" type="text" placeholder="Buscar por CUE, nombre o distrito..." class="w-full bg-[#0d1117] border border-[#30363d] rounded-md pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-[#58a6ff]">
+        </div>
+        <select id="nivelFilter" class="bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#58a6ff]">
+          <option value="">Todos los niveles</option>
+          <option>Inicial</option>
+          <option>Primaria</option>
+          <option>Secundaria</option>
+          <option>Superior</option>
+        </select>
+        <button id="refreshBtn" class="bg-[#238636] hover:bg-[#2ea043] rounded-md px-3 py-2 text-sm font-medium transition">
+          <i class="fa-solid fa-rotate mr-1"></i>Actualizar
+        </button>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 xl:grid-cols-[1.25fr_1fr] gap-4">
+      <section class="gh-card overflow-hidden">
+        <div class="px-4 py-3 border-b border-[#30363d] flex items-center justify-between">
+          <h2 class="text-sm font-semibold">Establecimientos</h2>
+          <span id="countLabel" class="text-xs text-[#8b949e]">0 resultados</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-[#0d1117] text-[#8b949e]">
+              <tr>
+                <th class="text-left px-4 py-2 font-medium">CUE</th>
+                <th class="text-left px-4 py-2 font-medium">Escuela</th>
+                <th class="text-left px-4 py-2 font-medium">Nivel</th>
+                <th class="text-left px-4 py-2 font-medium">Distrito</th>
+              </tr>
+            </thead>
+            <tbody id="schoolsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="gh-card p-4 md:p-5">
+        <h2 class="text-sm font-semibold mb-3">Detalle de escuela</h2>
+        <div id="schoolDetail" class="text-sm text-[#8b949e] space-y-2">
+          <p>Seleccioná una escuela para ver su ficha.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const demoSchools = [
+      { cue: '060123400', name: 'EP N° 15 Jose de San Martin', level: 'Primaria', district: 'La Matanza', address: 'Av. Libertad 1200', director: 'Maria Gomez', tel: '(011) 4455-1122' },
+      { cue: '060123401', name: 'Jardin N° 902 Rayito de Sol', level: 'Inicial', district: 'La Matanza', address: 'Calle 8 N° 540', director: 'Carla Rios', tel: '(011) 4455-1133' },
+      { cue: '060123402', name: 'EES N° 47 Hipolito Yrigoyen', level: 'Secundaria', district: 'La Matanza', address: 'Ruta 3 Km 29', director: 'Pablo Diaz', tel: '(011) 4455-1144' },
+      { cue: '060123403', name: 'ISFD N° 56', level: 'Superior', district: 'La Matanza', address: 'Belgrano 180', director: 'Laura Sosa', tel: '(011) 4455-1155' }
+    ];
+
+    let filteredSchools = [...demoSchools];
+
+    function renderSchools() {
+      const tbody = document.getElementById('schoolsBody');
+      const countLabel = document.getElementById('countLabel');
+      tbody.innerHTML = '';
+
+      filteredSchools.forEach((school) => {
+        const tr = document.createElement('tr');
+        tr.className = 'table-row border-b border-[#30363d] cursor-pointer';
+        tr.innerHTML =
+          '<td class="px-4 py-3">' + school.cue + '</td>' +
+          '<td class="px-4 py-3">' + school.name + '</td>' +
+          '<td class="px-4 py-3">' + school.level + '</td>' +
+          '<td class="px-4 py-3">' + school.district + '</td>';
+
+        tr.addEventListener('click', () => showSchoolDetail(school));
+        tbody.appendChild(tr);
+      });
+
+      countLabel.textContent = filteredSchools.length + ' resultados';
+    }
+
+    function showSchoolDetail(school) {
+      const detail = document.getElementById('schoolDetail');
+      detail.innerHTML =
+        '<div class="space-y-2">' +
+          '<p><span class="text-[#8b949e]">CUE:</span> <span class="text-[#e6edf3]">' + school.cue + '</span></p>' +
+          '<p><span class="text-[#8b949e]">Nombre:</span> <span class="text-[#e6edf3]">' + school.name + '</span></p>' +
+          '<p><span class="text-[#8b949e]">Nivel:</span> <span class="text-[#e6edf3]">' + school.level + '</span></p>' +
+          '<p><span class="text-[#8b949e]">Distrito:</span> <span class="text-[#e6edf3]">' + school.district + '</span></p>' +
+          '<p><span class="text-[#8b949e]">Dirección:</span> <span class="text-[#e6edf3]">' + school.address + '</span></p>' +
+          '<p><span class="text-[#8b949e]">Directora/or:</span> <span class="text-[#e6edf3]">' + school.director + '</span></p>' +
+          '<p><span class="text-[#8b949e]">Teléfono:</span> <span class="text-[#e6edf3]">' + school.tel + '</span></p>' +
+        '</div>';
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+      const level = document.getElementById('nivelFilter').value;
+
+      filteredSchools = demoSchools.filter((school) => {
+        const matchesSearch = !search ||
+          school.cue.toLowerCase().includes(search) ||
+          school.name.toLowerCase().includes(search) ||
+          school.district.toLowerCase().includes(search);
+        const matchesLevel = !level || school.level === level;
+        return matchesSearch && matchesLevel;
+      });
+
+      renderSchools();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = localStorage.getItem('user');
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      renderSchools();
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('nivelFilter').addEventListener('change', applyFilters);
+      document.getElementById('refreshBtn').addEventListener('click', applyFilters);
+    });
+  </script>
+</body>
+</html>
