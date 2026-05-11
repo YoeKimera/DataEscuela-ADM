@@ -35,14 +35,18 @@ async function handleLogin() {
   submitText.textContent = 'Ingresando...';
 
   try {
-    // Usar GET con parámetros para evitar CORS preflight
+    // Usar form-urlencoded para evitar preflight CORS
     const params = new URLSearchParams();
     params.append('action', 'login');
     params.append('email', email);
     params.append('pin', pin);
 
-    const response = await fetch(window.APP_CONFIG.API_BASE_URL + '?' + params.toString(), {
-      method: 'GET'
+    const response = await fetch(window.APP_CONFIG.API_BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: params.toString()
     });
 
     const data = await response.json();
