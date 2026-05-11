@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DataEscuela ADM</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>DataEscuela ADM</h1>
+      <p>Frontend en GitHub + API en Apps Script</p>
+    </header>
+
+    <main class="container">
+      <section class="panel">
+        <h2>Estado de API</h2>
+        <p id="statusText">Sin verificar</p>
+        <button id="checkApiBtn" type="button">Probar conexión</button>
+      </section>
+
+      <section class="panel">
+        <h2>Endpoint actual</h2>
+        <code id="apiUrl"></code>
+      </section>
+    </main>
+
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
