@@ -35,16 +35,14 @@ async function handleLogin() {
   submitText.textContent = 'Ingresando...';
 
   try {
-    const response = await fetch(window.APP_CONFIG.API_BASE_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        action: 'login',
-        email: email,
-        pin: pin
-      })
+    // Usar GET con parámetros para evitar CORS preflight
+    const params = new URLSearchParams();
+    params.append('action', 'login');
+    params.append('email', email);
+    params.append('pin', pin);
+
+    const response = await fetch(window.APP_CONFIG.API_BASE_URL + '?' + params.toString(), {
+      method: 'GET'
     });
 
     const data = await response.json();
