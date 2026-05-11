@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DataEscuela | Dashboard</title>
+  <title>DataEscuela | Sistema</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
@@ -45,14 +45,20 @@
       color: #58a6ff;
     }
 
-    .module-card {
-      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    .module-nav-item {
+      transition: 0.2s ease;
     }
 
-    .module-card:hover {
-      transform: translateY(-2px);
+    .module-nav-item.active {
+      background: #161b22;
       border-color: #58a6ff;
-      box-shadow: 0 8px 26px rgba(1, 4, 9, 0.45);
+      color: #e6edf3;
+    }
+
+    .module-content-card {
+      border: 1px solid var(--gh-border);
+      background: var(--gh-card);
+      border-radius: 12px;
     }
   </style>
 </head>
@@ -84,13 +90,13 @@
     <div class="grid grid-cols-1 lg:grid-cols-[270px_1fr] min-h-[78vh]">
       <aside class="border-r border-[#30363d] p-4 md:p-5 bg-[#0d1117]">
         <p class="text-xs uppercase tracking-[0.16em] text-[#8b949e] mb-3">Navegación</p>
-        <nav class="space-y-2 mb-6">
-          <a href="dashboard.html" class="gh-link flex items-center gap-2 px-3 py-2 rounded-md bg-[#161b22] border border-[#30363d] text-sm font-medium">
+        <nav id="moduleNav" class="space-y-2 mb-6">
+          <button data-module="inicio" class="module-nav-item gh-link w-full text-left flex items-center gap-2 px-3 py-2 rounded-md border border-[#30363d] text-sm font-medium">
             <i class="fa-solid fa-gauge-high text-[#2ea043]"></i>Inicio
-          </a>
-          <a href="ficha-escuelas.html" class="gh-link flex items-center gap-2 px-3 py-2 rounded-md border border-[#30363d] text-sm">
+          </button>
+          <button data-module="ficha-escuelas" class="module-nav-item gh-link w-full text-left flex items-center gap-2 px-3 py-2 rounded-md border border-[#30363d] text-sm">
             <i class="fa-solid fa-building-columns text-[#58a6ff]"></i>Ficha de Escuelas
-          </a>
+          </button>
           <div class="flex items-center gap-2 px-3 py-2 rounded-md border border-[#30363d] text-sm text-[#8b949e]">
             <i class="fa-solid fa-calendar-check"></i>Agenda (próximamente)
           </div>
@@ -109,112 +115,19 @@
         </div>
       </aside>
 
-      <main class="p-4 md:p-6 space-y-6">
-        <section class="gh-card p-5 md:p-6">
-          <p class="text-xs uppercase tracking-[0.14em] text-[#8b949e] mb-2">Resumen general</p>
-          <h2 class="text-2xl md:text-3xl font-semibold tracking-tight mb-2">Panel de gestión distrital</h2>
-          <p class="text-sm text-[#8b949e] max-w-3xl">Vista central para acceder a módulos, verificar estado de API y gestionar información escolar con una experiencia consistente.</p>
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
-            <div class="gh-card p-3">
-              <p class="text-xs text-[#8b949e]">Módulo activo</p>
-              <p class="text-sm font-semibold mt-1">Ficha de Escuelas</p>
-            </div>
-            <div class="gh-card p-3">
-              <p class="text-xs text-[#8b949e]">Versión</p>
-              <p class="text-sm font-semibold mt-1">v1.0</p>
-            </div>
-            <div class="gh-card p-3">
-              <p class="text-xs text-[#8b949e]">Permisos</p>
-              <p class="text-sm font-semibold mt-1">Activos</p>
-            </div>
-            <div class="gh-card p-3">
-              <p class="text-xs text-[#8b949e]">Última conexión</p>
-              <p id="lastLogin" class="text-sm font-semibold mt-1">Hoy</p>
-            </div>
-          </div>
+      <main class="p-4 md:p-6 space-y-4">
+        <section class="module-content-card p-4 md:p-5">
+          <p id="moduleTag" class="text-xs uppercase tracking-[0.14em] text-[#8b949e] mb-2">Módulo</p>
+          <h2 id="moduleTitle" class="text-2xl md:text-3xl font-semibold tracking-tight mb-2">Cargando...</h2>
+          <p id="moduleSubtitle" class="text-sm text-[#8b949e] max-w-3xl">Inicializando módulo</p>
         </section>
 
-        <section>
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="text-lg font-semibold">Módulos</h3>
-            <span class="text-xs text-[#8b949e]">1 activo, 2 en preparación</span>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            <a href="ficha-escuelas.html" class="module-card gh-card p-5 block">
-              <div class="flex items-center gap-3 mb-3">
-                <i class="fa-solid fa-building-columns text-[#58a6ff] text-xl"></i>
-                <h4 class="font-semibold">Ficha de Escuelas</h4>
-              </div>
-              <p class="text-sm text-[#8b949e] mb-4">Consulta y edición de datos institucionales por establecimiento.</p>
-              <span class="inline-block px-2 py-1 rounded text-xs border border-[#2ea043] text-[#2ea043] bg-[#2ea0431a]">Activo</span>
-            </a>
-
-            <div class="module-card gh-card p-5">
-              <div class="flex items-center gap-3 mb-3">
-                <i class="fa-solid fa-user-tie text-[#f2cc60] text-xl"></i>
-                <h4 class="font-semibold">Inspectores</h4>
-              </div>
-              <p class="text-sm text-[#8b949e] mb-4">Agenda y seguimiento de tareas inspectivas.</p>
-              <span class="inline-block px-2 py-1 rounded text-xs border border-[#f2cc60] text-[#f2cc60] bg-[#f2cc601a]">Próximamente</span>
-            </div>
-
-            <div class="module-card gh-card p-5">
-              <div class="flex items-center gap-3 mb-3">
-                <i class="fa-solid fa-chart-line text-[#d2a8ff] text-xl"></i>
-                <h4 class="font-semibold">Reportes</h4>
-              </div>
-              <p class="text-sm text-[#8b949e] mb-4">Indicadores estratégicos para decisión distrital.</p>
-              <span class="inline-block px-2 py-1 rounded text-xs border border-[#d2a8ff] text-[#d2a8ff] bg-[#d2a8ff1a]">Próximamente</span>
-            </div>
-          </div>
-        </section>
+        <section id="moduleContent" class="space-y-4"></section>
       </main>
     </div>
   </div>
 
   <script src="config.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const userStr = localStorage.getItem('user');
-      const user = userStr ? JSON.parse(userStr) : null;
-
-      if (!user) {
-        window.location.href = 'index.html';
-        return;
-      }
-
-      document.getElementById('userName').textContent = user.name || 'Usuario';
-      document.getElementById('userRole').textContent = user.role || 'user';
-
-      document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = 'index.html';
-      });
-
-      checkApiStatus();
-    });
-
-    async function checkApiStatus() {
-      const statusEl = document.getElementById('apiStatus');
-      const timeEl = document.getElementById('statusTime');
-      const now = new Date();
-      timeEl.textContent = now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
-
-      try {
-        const response = await fetch(window.APP_CONFIG.API_BASE_URL + '?action=health');
-        const data = await response.json();
-        if (response.ok && data && data.success === true) {
-          statusEl.className = 'inline-flex items-center gap-2 text-xs px-2 py-1 rounded-full border border-[#2ea043] text-[#2ea043] bg-[#2ea0431a]';
-          statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-[#2ea043]"></span>Conectada';
-        } else {
-          throw new Error('Respuesta inválida de API');
-        }
-      } catch (error) {
-        statusEl.className = 'inline-flex items-center gap-2 text-xs px-2 py-1 rounded-full border border-[#f85149] text-[#f85149] bg-[#f851491a]';
-        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-[#f85149]"></span>Sin conexión';
-      }
-    }
-  </script>
+  <script src="dashboard-app.js"></script>
 </body>
 </html>

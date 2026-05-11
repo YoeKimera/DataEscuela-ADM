@@ -58,9 +58,9 @@ async function handleLogin() {
 
       showSuccess(`¡Bienvenido, ${data.data.user.name}!`);
 
-      // Redirigir al dashboard después de 1.5 segundos
+      // Redirigir al shell del sistema después de 1.5 segundos
       setTimeout(() => {
-        window.location.href = 'dashboard.html';
+        window.location.href = 'dashboard.html#/inicio';
       }, 1500);
     } else {
       showError(data.error.message || 'Error al iniciar sesión');
