@@ -1,4 +1,4 @@
 window.APP_CONFIG = {
-  // Reemplazar por la URL real del deployment nuevo de Apps Script.
-  API_BASE_URL: 'https://script.google.com/macros/s/AKfycbwGJ8tEnLWcayFzILUctTiHp7JI_X1pz1vlsPyZA4dzcbKdH2l3rAmxGrOMp7KtvajKAg/exec'
+  // DataEscuela-API endpoint
+  API_BASE_URL: 'https://script.google.com/macros/s/AKfycbyRjJhzOqkZ4B6vXfT4gFUpI3vqHZvgSRe2iCCFggJaQ8QIGFC9_Ut5v1Jn3pN1VMWriw/exec'
 };
